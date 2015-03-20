@@ -3,6 +3,7 @@ package main
 import (
 	"html/template"
 	"net/http"
+	"os"
 	"path"
 )
 
@@ -24,6 +25,13 @@ func Embed(w http.ResponseWriter, r *http.Request) {
 }
 
 func main() {
+	port := os.Getenv("PORT")
+	if port == "" {
+		port = "8080"
+	}
+
 	http.HandleFunc("/", Index)
 	http.HandleFunc("/embed", Embed)
+
+	http.ListenAndServe(":"+port, nil)
 }
