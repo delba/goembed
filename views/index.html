@@ -2,6 +2,8 @@
 <html>
 <head>
     <title>Goembed</title>
+    <link rel="stylesheet" type="text/css" href="http://getskeleton.com/dist/css/normalize.css">
+    <link rel="stylesheet" type="text/css" href="http://getskeleton.com/dist/css/skeleton.css">
 </head>
 <body>
     <div class="container">
@@ -11,16 +13,15 @@
             </div>
         </div>
         <div class="row">
-            <form for="/" method="POST">
-                <div class="columns six">
-                    <label></label>
-                    <input type="text">
-                </div>
-                <div class="columns six">
-                    <input type="text">
-                </div>                
-            </form>
+            <div class="columns twelve">
+                <form action="/embed" method="POST">
+                    <label>Url</label>
+                    <input class="u-full-width" type="text" id="url" autofocus>
+                    <input type="submit">
+                </form>
+            </div>
         </div>
     </div>
 </body>
 </html>
+
