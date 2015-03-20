@@ -1,8 +1,8 @@
 package main
 
 import (
+	"bytes"
 	"encoding/json"
-	"fmt"
 	"html/template"
 	"io/ioutil"
 	"net/http"
@@ -37,7 +37,11 @@ func Embed(w http.ResponseWriter, r *http.Request) {
 	var oembed models.OEmbed
 	json.Unmarshal(contents, &oembed)
 
-	fmt.Println(oembed.HTML)
+	var buf bytes.Buffer
+	err = json.Indent(&buf, contents, "", "  ")
+	handle(err)
+
+	w.Write(buf.Bytes())
 }
 
 func main() {

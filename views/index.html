@@ -9,7 +9,9 @@
         $(function() {
             $('form').submit(function(e) {
                 e.preventDefault();
-                $.post("/embed", {url: $('#url').val()});
+                $.post("/embed", {url: $('#url').val()}, function(resp) {
+                    $('code').text(resp);
+                });
             });
         }); 
     </script>
@@ -28,6 +30,11 @@
                     <input class="u-full-width" type="text" name="url" id="url" autofocus>
                     <input type="submit">
                 </form>
+            </div>
+        </div>
+        <div class="row">
+            <div class="columns twelve">
+                <pre><code></code></pre>
             </div>
         </div>
     </div>
