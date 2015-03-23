@@ -1,5 +1,7 @@
 package models
 
+import "html/template"
+
 type OEmbed struct {
 	AuthorName      string `json:"author_name"`
 	AuthorURL       string `json:"author_url"`
@@ -19,4 +21,5 @@ type OEmbed struct {
 	Version         string `json:"version"`
 	VideoID         int    `json:"video_id"`
 	Width           int    `json:"width"`
+	RawHTML         template.HTML
 }
