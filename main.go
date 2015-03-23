@@ -32,28 +32,11 @@ func Index(w http.ResponseWriter, r *http.Request) {
 	t, err := template.ParseFiles(path.Join("views", "index.html"))
 	handle(err)
 
-	urls, err := redis.Strings(c.Do("LRANGE", "myurls", "0", "-1"))
+	oembeds, err := model.AllOEmbeds()
 	handle(err)
 
-	c.Send("MULTI")
-
-	for _, url := range urls {
-		c.Send("HGETALL", url)
-	}
-
-	values, _ := redis.Values(c.Do("EXEC"))
-
-	var oembed model.OEmbed
-	var data []model.OEmbed
-
-	for _, v := range values {
-		values, _ = redis.Values(v, nil)
-		err := redis.ScanStruct(values, &oembed)
-		handle(err)
-		data = append(data, oembed)
-	}
-
-	err = t.Execute(w, data)
+	err = t.Execute(w, oembeds)
+	handle(err)
 }
 
 func Create(w http.ResponseWriter, r *http.Request) {
