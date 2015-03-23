@@ -8,7 +8,7 @@
     <script src="http://rawgit.com/davatron5000/FitVids.js/master/jquery.fitvids.js"></script>
     <script type="text/javascript">
         $(function() {
-            $('.output').fitVids();
+            $('.video').fitVids();
             $('form').submit(function(e) {
                 e.preventDefault();
                 $.post("/embed", {url: $('#url').val()}, function(resp) {
@@ -41,9 +41,13 @@
                 </form>
             </div>
         </div>
+        <div class="row">
+            <div class="columns twelve video output">
+            </div>
+        </div>
         {{range .}}
         <div class="row">
-            <div class="columns twelve output">
+            <div class="columns video twelve">
               {{.HTML}}
             </div>
         </div>
