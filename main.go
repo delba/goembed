@@ -45,7 +45,7 @@ func Index(w http.ResponseWriter, r *http.Request) {
 	err = t.Execute(w, data)
 }
 
-func Embed(w http.ResponseWriter, r *http.Request) {
+func Create(w http.ResponseWriter, r *http.Request) {
 	url := r.FormValue("url")
 	if url == "" {
 		w.WriteHeader(http.StatusNotAcceptable)
@@ -81,7 +81,7 @@ func main() {
 	}
 
 	http.HandleFunc("/", Index)
-	http.HandleFunc("/embed", Embed)
+	http.HandleFunc("/embed", Create)
 
 	http.ListenAndServe(":"+port, nil)
 }
