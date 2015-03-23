@@ -21,5 +21,8 @@ type OEmbed struct {
 	Version         string `json:"version"`
 	VideoID         int    `json:"video_id"`
 	Width           int    `json:"width"`
-	RawHTML         template.HTML
+}
+
+func (o *OEmbed) RawHTML() template.HTML {
+	return template.HTML(o.HTML)
 }

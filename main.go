@@ -36,12 +36,9 @@ func Index(w http.ResponseWriter, r *http.Request) {
 
 	var data []models.OEmbed
 	for _, url := range urls {
-		res, _ := redis.Values(c.Do("HGETALL", url))
+		values, _ := redis.Values(c.Do("HGETALL", url))
 		var oembed models.OEmbed
-		redis.ScanStruct(res, &oembed)
-
-		oembed.RawHTML = template.HTML(oembed.HTML)
-
+		redis.ScanStruct(values, &oembed)
 		data = append(data, oembed)
 	}
 
