@@ -41,10 +41,13 @@
                 </form>
             </div>
         </div>
+        {{range .}}
         <div class="row">
             <div class="columns twelve output">
+              {{.HTML}}
             </div>
         </div>
+        {{end}}
         <div class="row">
             <div class="columns twelve">
                 <pre><code></code></pre>

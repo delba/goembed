@@ -32,14 +32,20 @@ func Index(w http.ResponseWriter, r *http.Request) {
 	t, err := template.ParseFiles(path.Join("views", "index.html"))
 	handle(err)
 
-	res, err := redis.Values(c.Do("HGETALL", "https://vimeo.com/28018829"))
-	var oembed models.OEmbed
-	redis.ScanStruct(res, &oembed)
+	urls, err := redis.Strings(c.Do("SMEMBERS", "urls"))
 
-	data := struct {
+	type Data struct {
 		HTML template.HTML
-	}{
-		HTML: template.HTML(oembed.HTML),
+	}
+
+	var data []Data
+
+	for _, url := range urls {
+		res, _ := redis.Values(c.Do("HGETALL", url))
+		var oembed models.OEmbed
+		redis.ScanStruct(res, &oembed)
+
+		data = append(data, Data{HTML: template.HTML(oembed.HTML)})
 	}
 
 	err = t.Execute(w, data)
@@ -62,6 +68,9 @@ func Create(w http.ResponseWriter, r *http.Request) {
 	var oembed models.OEmbed
 	json.Unmarshal(contents, &oembed)
 	c.Send("HMSET", redis.Args{}.Add(url).AddFlat(oembed)...)
+
+	err = c.Send("SADD", "urls", url)
+	handle(err)
 
 	var buf bytes.Buffer
 	err = json.Indent(&buf, contents, "", "  ")
