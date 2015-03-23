@@ -1,7 +1,10 @@
 package model
 
 import (
+	"encoding/json"
 	"html/template"
+	"io/ioutil"
+	"net/http"
 
 	"github.com/garyburd/redigo/redis"
 )
@@ -83,4 +86,36 @@ func AllOEmbeds() ([]OEmbed, error) {
 	}
 
 	return oembeds, err
+}
+
+func CreateOEmbed(url string) (OEmbed, error) {
+	var oembed OEmbed
+	var err error
+
+	res, err := http.Get("https://vimeo.com/api/oembed.json?url=" + url)
+	if err != nil {
+		return oembed, err
+	}
+	defer res.Body.Close()
+
+	contents, err := ioutil.ReadAll(res.Body)
+	if err != nil {
+		return oembed, err
+	}
+
+	err = json.Unmarshal(contents, &oembed)
+	if err != nil {
+		return oembed, err
+	}
+
+	c.Send("MULTI")
+	c.Send("HMSET", redis.Args{}.Add(url).AddFlat(oembed)...)
+	c.Send("SADD", "urls", url)
+	c.Send("LPUSH", "myurls", url)
+	_, err = c.Do("EXEC")
+	if err != nil {
+		return oembed, err
+	}
+
+	return oembed, err
 }

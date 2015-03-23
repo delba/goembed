@@ -1,10 +1,8 @@
 package main
 
 import (
-	"bytes"
 	"encoding/json"
 	"html/template"
-	"io/ioutil"
 	"net/http"
 	"os"
 	"path"
@@ -46,32 +44,14 @@ func Create(w http.ResponseWriter, r *http.Request) {
 		w.Write([]byte("Url param can't be blank"))
 		return
 	}
-	res, err := http.Get("https://vimeo.com/api/oembed.json?url=" + url)
-	handle(err)
-	defer res.Body.Close()
 
-	contents, err := ioutil.ReadAll(res.Body)
+	oembed, err := model.CreateOEmbed(url)
 	handle(err)
 
-	var oembed model.OEmbed
-	json.Unmarshal(contents, &oembed)
-
-	c.Send("MULTI")
-	c.Send("HMSET", redis.Args{}.Add(url).AddFlat(oembed)...)
-	c.Send("SADD", "urls", url)
-	c.Send("LPUSH", "myurls", url)
-	_, err = c.Do("EXEC")
+	data, err := json.Marshal(oembed)
 	handle(err)
 
-	var buf bytes.Buffer
-	err = json.Indent(&buf, contents, "", "  ")
-	if err != nil {
-		w.WriteHeader(http.StatusNotAcceptable)
-		w.Write([]byte(err.Error()))
-		return
-	}
-
-	w.Write(buf.Bytes())
+	w.Write(data)
 }
 
 func main() {
