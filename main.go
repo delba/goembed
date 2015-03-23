@@ -35,11 +35,21 @@ func Index(w http.ResponseWriter, r *http.Request) {
 	urls, err := redis.Strings(c.Do("LRANGE", "myurls", "0", "-1"))
 	handle(err)
 
-	var data []models.OEmbed
+	c.Send("MULTI")
+
 	for _, url := range urls {
-		values, _ := redis.Values(c.Do("HGETALL", url))
-		var oembed models.OEmbed
-		redis.ScanStruct(values, &oembed)
+		c.Send("HGETALL", url)
+	}
+
+	values, _ := redis.Values(c.Do("EXEC"))
+
+	var oembed models.OEmbed
+	var data []models.OEmbed
+
+	for _, v := range values {
+		values, _ = redis.Values(v, nil)
+		err := redis.ScanStruct(values, &oembed)
+		handle(err)
 		data = append(data, oembed)
 	}
 
