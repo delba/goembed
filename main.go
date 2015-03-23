@@ -67,7 +67,9 @@ func Create(w http.ResponseWriter, r *http.Request) {
 
 	var oembed models.OEmbed
 	json.Unmarshal(contents, &oembed)
-	c.Send("HMSET", redis.Args{}.Add(url).AddFlat(oembed)...)
+
+	err = c.Send("HMSET", redis.Args{}.Add(url).AddFlat(oembed)...)
+	handle(err)
 
 	err = c.Send("SADD", "urls", url)
 	handle(err)
