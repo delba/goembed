@@ -8,22 +8,12 @@ import (
 	"path"
 
 	"github.com/delba/goembed/model"
-	"github.com/garyburd/redigo/redis"
 )
-
-var c redis.Conn
 
 func handle(err error) {
 	if err != nil {
 		panic(err)
 	}
-}
-
-func init() {
-	var err error
-
-	c, err = redis.Dial("tcp", "127.0.0.1:6379")
-	handle(err)
 }
 
 func Index(w http.ResponseWriter, r *http.Request) {
