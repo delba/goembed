@@ -33,6 +33,7 @@ func Index(w http.ResponseWriter, r *http.Request) {
 	handle(err)
 
 	urls, err := redis.Strings(c.Do("LRANGE", "myurls", "0", "-1"))
+	handle(err)
 
 	var data []models.OEmbed
 	for _, url := range urls {
