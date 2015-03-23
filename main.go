@@ -32,7 +32,7 @@ func Index(w http.ResponseWriter, r *http.Request) {
 	t, err := template.ParseFiles(path.Join("views", "index.html"))
 	handle(err)
 
-	urls, err := redis.Strings(c.Do("SMEMBERS", "urls"))
+	urls, err := redis.Strings(c.Do("LRANGE", "myurls", "0", "-1"))
 
 	type Data struct {
 		HTML template.HTML
@@ -70,6 +70,9 @@ func Create(w http.ResponseWriter, r *http.Request) {
 	c.Send("HMSET", redis.Args{}.Add(url).AddFlat(oembed)...)
 
 	err = c.Send("SADD", "urls", url)
+	handle(err)
+
+	err = c.Send("LPUSH", "myurls", url)
 	handle(err)
 
 	var buf bytes.Buffer
