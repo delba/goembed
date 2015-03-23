@@ -27,6 +27,11 @@ func Index(w http.ResponseWriter, r *http.Request) {
 
 func Embed(w http.ResponseWriter, r *http.Request) {
 	url := r.FormValue("url")
+	if url == "" {
+		w.WriteHeader(http.StatusNotAcceptable)
+		w.Write([]byte("Url param can't be blank"))
+		return
+	}
 	res, err := http.Get("https://vimeo.com/api/oembed.json?url=" + url)
 	handle(err)
 	defer res.Body.Close()
@@ -39,7 +44,11 @@ func Embed(w http.ResponseWriter, r *http.Request) {
 
 	var buf bytes.Buffer
 	err = json.Indent(&buf, contents, "", "  ")
-	handle(err)
+	if err != nil {
+		w.WriteHeader(http.StatusNotAcceptable)
+		w.Write([]byte(err.Error()))
+		return
+	}
 
 	w.Write(buf.Bytes())
 }
