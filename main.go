@@ -68,13 +68,11 @@ func Create(w http.ResponseWriter, r *http.Request) {
 	var oembed models.OEmbed
 	json.Unmarshal(contents, &oembed)
 
-	err = c.Send("HMSET", redis.Args{}.Add(url).AddFlat(oembed)...)
-	handle(err)
-
-	err = c.Send("SADD", "urls", url)
-	handle(err)
-
-	err = c.Send("LPUSH", "myurls", url)
+	c.Send("MULTI")
+	c.Send("HMSET", redis.Args{}.Add(url).AddFlat(oembed)...)
+	c.Send("SADD", "urls", url)
+	c.Send("LPUSH", "myurls", url)
+	_, err = c.Do("EXEC")
 	handle(err)
 
 	var buf bytes.Buffer
