@@ -9,7 +9,7 @@ import (
 	"os"
 	"path"
 
-	"github.com/delba/goembed/models"
+	"github.com/delba/goembed/model"
 	"github.com/garyburd/redigo/redis"
 )
 
@@ -43,8 +43,8 @@ func Index(w http.ResponseWriter, r *http.Request) {
 
 	values, _ := redis.Values(c.Do("EXEC"))
 
-	var oembed models.OEmbed
-	var data []models.OEmbed
+	var oembed model.OEmbed
+	var data []model.OEmbed
 
 	for _, v := range values {
 		values, _ = redis.Values(v, nil)
@@ -70,7 +70,7 @@ func Create(w http.ResponseWriter, r *http.Request) {
 	contents, err := ioutil.ReadAll(res.Body)
 	handle(err)
 
-	var oembed models.OEmbed
+	var oembed model.OEmbed
 	json.Unmarshal(contents, &oembed)
 
 	c.Send("MULTI")
