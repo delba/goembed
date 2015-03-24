@@ -24,7 +24,7 @@ func init() {
 	handle(err)
 }
 
-type OEmbed struct {
+type Item struct {
 	AuthorName      string `json:"author_name"`
 	AuthorURL       string `json:"author_url"`
 	Description     string `json:"description"`
@@ -45,17 +45,17 @@ type OEmbed struct {
 	Width           int    `json:"width"`
 }
 
-func (o *OEmbed) RawHTML() template.HTML {
-	return template.HTML(o.HTML)
+func (i *Item) RawHTML() template.HTML {
+	return template.HTML(i.HTML)
 }
 
-func AllOEmbeds() ([]OEmbed, error) {
-	var oembeds []OEmbed
+func AllItems() ([]Item, error) {
+	var items []Item
 	var err error
 
 	urls, err := redis.Strings(c.Do("LRANGE", "myurls", "0", "-1"))
 	if err != nil {
-		return oembeds, err
+		return items, err
 	}
 
 	c.Send("MULTI")
@@ -66,56 +66,56 @@ func AllOEmbeds() ([]OEmbed, error) {
 
 	values, err := redis.Values(c.Do("EXEC"))
 	if err != nil {
-		return oembeds, err
+		return items, err
 	}
 
-	var oembed OEmbed
+	var item Item
 
 	for _, v := range values {
 		values, err = redis.Values(v, nil)
 		if err != nil {
-			return oembeds, err
+			return items, err
 		}
 
-		err = redis.ScanStruct(values, &oembed)
+		err = redis.ScanStruct(values, &item)
 		if err != nil {
-			return oembeds, err
+			return items, err
 		}
 
-		oembeds = append(oembeds, oembed)
+		items = append(items, item)
 	}
 
-	return oembeds, err
+	return items, err
 }
 
-func CreateOEmbed(url string) (OEmbed, error) {
-	var oembed OEmbed
+func CreateItem(url string) (Item, error) {
+	var item Item
 	var err error
 
 	res, err := http.Get("https://vimeo.com/api/oembed.json?url=" + url)
 	if err != nil {
-		return oembed, err
+		return item, err
 	}
 	defer res.Body.Close()
 
 	contents, err := ioutil.ReadAll(res.Body)
 	if err != nil {
-		return oembed, err
+		return item, err
 	}
 
-	err = json.Unmarshal(contents, &oembed)
+	err = json.Unmarshal(contents, &item)
 	if err != nil {
-		return oembed, err
+		return item, err
 	}
 
 	c.Send("MULTI")
-	c.Send("HMSET", redis.Args{}.Add(url).AddFlat(oembed)...)
+	c.Send("HMSET", redis.Args{}.Add(url).AddFlat(item)...)
 	c.Send("SADD", "urls", url)
 	c.Send("LPUSH", "myurls", url)
 	_, err = c.Do("EXEC")
 	if err != nil {
-		return oembed, err
+		return item, err
 	}
 
-	return oembed, err
+	return item, err
 }

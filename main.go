@@ -20,10 +20,10 @@ func Index(w http.ResponseWriter, r *http.Request) {
 	t, err := template.ParseFiles(path.Join("views", "index.html"))
 	handle(err)
 
-	oembeds, err := model.AllOEmbeds()
+	items, err := model.AllItems()
 	handle(err)
 
-	err = t.Execute(w, oembeds)
+	err = t.Execute(w, items)
 	handle(err)
 }
 
@@ -35,10 +35,10 @@ func Create(w http.ResponseWriter, r *http.Request) {
 		return
 	}
 
-	oembed, err := model.CreateOEmbed(url)
+	item, err := model.CreateItem(url)
 	handle(err)
 
-	data, err := json.Marshal(oembed)
+	data, err := json.Marshal(item)
 	handle(err)
 
 	w.Write(data)
