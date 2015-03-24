@@ -113,9 +113,6 @@ func CreateItem(url string) (Item, error) {
 	c.Send("SADD", "urls", url)
 	c.Send("LPUSH", "myurls", url)
 	_, err = c.Do("EXEC")
-	if err != nil {
-		return item, err
-	}
 
 	return item, err
 }
