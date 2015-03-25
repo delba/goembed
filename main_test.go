@@ -2,19 +2,21 @@ package main
 
 import (
 	"bytes"
-	"fmt"
+	"encoding/json"
 	"log"
 	"net/http"
 	"net/http/httptest"
 	"net/url"
 	"testing"
+
+	"github.com/delba/goembed/model"
 )
 
 func init() {
 
 }
 
-func TestEmbed(t *testing.T) {
+func TestCreate(t *testing.T) {
 	v := url.Values{}
 	v.Set("url", "http://vimeo.com/18150336")
 
@@ -28,13 +30,19 @@ func TestEmbed(t *testing.T) {
 		log.Fatal(err)
 	}
 	w := httptest.NewRecorder()
-	Embed(w, req)
+	Create(w, req)
 
-	fmt.Printf("%d - %s", w.Code, w.Body.String())
-
+	var item model.Item
+	json.Unmarshal(w.Body.Bytes(), &item)
+	if item.AuthorURL != "https://vimeo.com/phoenixfly" {
+		t.Errorf("Incorrect author url")
+	}
+	if item.URI != "/videos/18150336" {
+		t.Errorf("Incorrect uri")
+	}
 }
 
-func TestEmptyEmbed(t *testing.T) {
+func TestEmptyCreate(t *testing.T) {
 
 	req, err := http.NewRequest(
 		"POST",
@@ -45,13 +53,27 @@ func TestEmptyEmbed(t *testing.T) {
 		log.Fatal(err)
 	}
 	w := httptest.NewRecorder()
-	Embed(w, req)
+	Create(w, req)
 	if w.Code != 406 {
-
+		t.Errorf("Wrong response code for invalid request")
 	}
-	fmt.Printf("%d - %s", w.Code, w.Body.String())
 }
 
 func TestIndex(t *testing.T) {
+	req, err := http.NewRequest(
+		"POST",
+		"http://example.com/",
+		nil,
+	)
+	if err != nil {
+		log.Fatal(err)
+	}
+	w := httptest.NewRecorder()
+	Index(w, req)
+	if w.Code != 200 {
+		t.Errorf("Wrong response code for index request")
+	}
 
+	// Maybe parse the page content here and confirm that
+	// it's outputting the right content.
 }
