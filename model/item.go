@@ -43,10 +43,24 @@ type Item struct {
 	Version         string `json:"version"`
 	VideoID         int    `json:"video_id"`
 	Width           int    `json:"width"`
+	ItemURL         string `json:"item_url"`
 }
 
 func (i *Item) RawHTML() template.HTML {
 	return template.HTML(i.HTML)
+}
+
+func FindByURL(url string) (Item, error) {
+	var item Item
+	var err error
+
+	values, err := redis.Values(c.Do("HGETALL", url))
+	if err != nil {
+		return item, err
+	}
+
+	err = redis.ScanStruct(values, &item)
+	return item, err
 }
 
 func AllItems() ([]Item, error) {
@@ -107,6 +121,7 @@ func CreateItem(url string) (Item, error) {
 	if err != nil {
 		return item, err
 	}
+	item.ItemURL = url
 
 	c.Send("MULTI")
 	c.Send("HMSET", redis.Args{}.Add(url).AddFlat(item)...)

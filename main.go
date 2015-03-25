@@ -27,6 +27,18 @@ func Index(w http.ResponseWriter, r *http.Request) {
 	handle(err)
 }
 
+func Show(w http.ResponseWriter, r *http.Request) {
+	url := r.URL.Query()["url"][0]
+
+	item, err := model.FindByURL(url)
+	handle(err)
+
+	data, err := json.Marshal(item)
+	handle(err)
+
+	w.Write(data)
+}
+
 func Create(w http.ResponseWriter, r *http.Request) {
 	url := r.FormValue("url")
 	if url == "" {
@@ -51,6 +63,7 @@ func main() {
 	}
 
 	http.HandleFunc("/", Index)
+	http.HandleFunc("/items/", Show)
 	http.HandleFunc("/embed", Create)
 
 	fs := http.FileServer(http.Dir("public"))
