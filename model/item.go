@@ -106,6 +106,16 @@ func CreateItem(url string) (Item, error) {
 	var item Item
 	var err error
 
+	isMember, err := redis.Bool(c.Do("SISMEMBER", "urls", url))
+	if err != nil {
+		return item, err
+	}
+
+	if isMember {
+		item, err = FindByURL(url)
+		return item, err
+	}
+
 	res, err := http.Get("https://vimeo.com/api/oembed.json?url=" + url)
 	if err != nil {
 		return item, err
