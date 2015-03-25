@@ -53,5 +53,8 @@ func main() {
 	http.HandleFunc("/", Index)
 	http.HandleFunc("/embed", Create)
 
+	fs := http.FileServer(http.Dir("public"))
+	http.Handle("/public/", http.StripPrefix("/public/", fs))
+
 	http.ListenAndServe(":"+port, nil)
 }

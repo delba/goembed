@@ -2,62 +2,36 @@
 <html>
 <head>
     <title>Goembed</title>
-    <link rel="stylesheet" type="text/css" href="http://getskeleton.com/dist/css/normalize.css">
-    <link rel="stylesheet" type="text/css" href="http://getskeleton.com/dist/css/skeleton.css">
-    <script src="//code.jquery.com/jquery-2.0.3.js"></script>
-    <script src="http://rawgit.com/davatron5000/FitVids.js/master/jquery.fitvids.js"></script>
-    <script type="text/javascript">
-        $(function() {
-            $('.video').fitVids();
-            $('form').submit(function(e) {
-                e.preventDefault();
-                $.post("/embed", {url: $('#url').val()}, function(resp) {
-                    $('code').text(resp);
-                    resp = JSON.parse(resp);
-                    $('.output').html(resp.html).fitVids();
-                });
-            });
-        });
-    </script>
-    <style type="text/css">
-        iframe {
-            width: 100%;
-        }
-    </style>
+    <link rel="stylesheet" href="/public/stylesheets/main.css">
 </head>
 <body>
-    <div class="container">
-        <div class="row">
-            <div class="columns twelve">
-                <h1>Goembed</h1>
-            </div>
-        </div>
-        <div class="row">
-            <div class="columns twelve">
-                <form action="/embed" method="POST">
-                    <label for="url">Url</label>
-                    <input class="u-full-width" type="text" name="url" id="url" autofocus>
-                    <input type="submit">
-                </form>
-            </div>
-        </div>
-        <div class="row">
-            <div class="columns twelve video output">
-            </div>
-        </div>
-        {{range .}}
-        <div class="row">
-            <div class="columns video twelve">
-              {{.RawHTML}}
-            </div>
-        </div>
-        {{end}}
-        <div class="row">
-            <div class="columns twelve">
-                <pre><code></code></pre>
-            </div>
-        </div>
-    </div>
+  <header>
+    <h1><a href="/">Home</a></h1>
+    <form action="/embed" method="POST" id="new_video">
+      <input type="text" name="url" placeholder="Enter an url&hellip;" autofocus />
+      <input type="submit" value="Submit">
+    </form>
+  </header>
+
+  <section id="videos">
+    {{range .}}
+      <article class="video">
+        <a data-url="{{.ItemURL}}">
+          <img src="{{.ThumbnailURL}}" alt=".Title">
+          <h2><span>{{.Title}}</span></h2>
+        </a>
+      </article>
+    {{end}}
+  </section>
+
+  <script src="//code.jquery.com/jquery-2.0.3.js"></script>
+  <script src="http://rawgit.com/davatron5000/FitVids.js/master/jquery.fitvids.js"></script>
+  <script src="/public/javascripts/main.js"></script>
+  <script type="text/javascript">
+    $('#videos a').hover(function() {
+      $(this).toggleClass('overlay');
+    });
+  </script>
 </body>
 </html>
 

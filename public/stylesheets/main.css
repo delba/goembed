@@ -1,0 +1,118 @@
+body {
+  font-family: 'Helvetica Neue', helvetica, arial, sans-serif;
+  color: #444;
+  -webkit-font-smoothing: antialiased;
+  padding: 0 5.555%;
+  margin: 0 auto;
+}
+
+header {
+  line-height: 48px;
+  padding: 11px 0;
+  margin: 8px 0;
+}
+
+header:before, header:after {
+  content: '';
+  display: table;
+}
+
+header:after {
+  clear: both;
+}
+
+header {
+  *zoom: 1;
+}
+
+header h1 {
+  float: left;
+  text-transform: lowercase;
+  font-size: 1.2em;
+  margin: 0;
+}
+
+header h1 a {
+  color: inherit;
+  text-decoration: none;
+}
+
+header .user {
+  float: right;
+  margin: 0;
+  font-size: 0.85em;
+}
+
+header .user a {
+  color: inherit;
+  text-decoration: none;
+  font-weight: bold;
+}
+
+header form {
+  display: inline;
+}
+
+#videos a {
+  display: block;
+  position: relative;
+}
+
+#videos h2 {
+  opacity: 0;
+  background: rgba(0, 0, 0, 0.5);
+  color: #fff;
+  margin: 0;
+  position: absolute;
+  top: 0;
+  left: 0;
+  right: 0;
+  bottom: 3px; /* hack */
+  -webkit-transition: opacity 200ms;
+  transition: opacity 200ms;
+}
+
+#videos .overlay h2 {
+  opacity: 1;
+}
+
+#videos h2 span {
+  display: block;
+  width: 100%;
+  text-align: center;
+  position: absolute;
+  top: 50%;
+  line-height: 1.5em;
+  margin-top: -0.75em;
+}
+
+#videos article {
+  margin-bottom: 1.5em;
+}
+
+#videos img {
+  width: 100%;
+  max-width: 100%;
+}
+
+input {
+  font: inherit;
+  line-height: 1.5em;
+}
+
+input[name="url"]:focus {
+  outline: none;
+}
+
+form a[href="/login"], form a[href="/register"] {
+  color: #39c;
+  text-decoration: none;
+}
+
+form a[href="/login"]:hover, form a[href="/register"]:hover {
+  text-decoration: underline;
+}
+
+.selected {
+  opacity: 0.2;
+}
