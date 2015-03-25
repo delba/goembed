@@ -12,9 +12,18 @@
             $('form').submit(function(e) {
                 e.preventDefault();
                 $.post("/embed", {url: $('#url').val()}, function(resp) {
-                    $('code').text(resp);
                     resp = JSON.parse(resp);
-                    $('.output').html(resp.html).fitVids();
+                    var url = resp.ProviderURL + resp.URI;
+                    var duplicate = false;
+                    $('.video').each(function(){
+                        var identifier = $(this).data('url');
+                        if (identifier == url) {
+                            duplicate = true;
+                        }
+                    });
+                    if (duplicate === false) {
+                        $('.output').html(resp.html).fitVids();
+                    }
                 });
             });
         });
@@ -47,16 +56,14 @@
         </div>
         {{range .}}
         <div class="row">
-            <div class="columns video twelve">
+            <div 
+                class="columns video twelve" 
+                data-url="{{.ProviderURL}}{{.URI}}"
+            >
               {{.RawHTML}}
             </div>
         </div>
         {{end}}
-        <div class="row">
-            <div class="columns twelve">
-                <pre><code></code></pre>
-            </div>
-        </div>
     </div>
 </body>
 </html>
