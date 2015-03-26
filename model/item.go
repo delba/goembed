@@ -72,12 +72,8 @@ func FindByURL(url string) (Item, error) {
 		return item, err
 	}
 
-	values, err := redis.Values(c.Do("HGETALL", "items:"+string(id)))
-	if err != nil {
-		return item, err
-	}
+	item, err = FindItem(id)
 
-	err = redis.ScanStruct(values, &item)
 	return item, err
 }
 
