@@ -43,18 +43,36 @@ type Item struct {
 	Version         string `json:"version"`
 	VideoID         int    `json:"video_id"`
 	Width           int    `json:"width"`
-	ItemURL         string `json:"item_url"`
+	ID              int    `json:"id"`
 }
 
 func (i *Item) RawHTML() template.HTML {
 	return template.HTML(i.HTML)
 }
 
+func FindItem(id int) (Item, error) {
+	var item Item
+	var err error
+
+	values, err := redis.Values(c.Do("HGETALL", "items:"+string(id)))
+	if err != nil {
+		return item, err
+	}
+
+	err = redis.ScanStruct(values, &item)
+	return item, err
+}
+
 func FindByURL(url string) (Item, error) {
 	var item Item
 	var err error
 
-	values, err := redis.Values(c.Do("HGETALL", "items:"+url))
+	id, err := redis.Int(c.Do("GET", "items:id:"+url))
+	if err != nil {
+		return item, err
+	}
+
+	values, err := redis.Values(c.Do("HGETALL", "items:"+string(id)))
 	if err != nil {
 		return item, err
 	}
@@ -67,15 +85,15 @@ func AllItems() ([]Item, error) {
 	var items []Item
 	var err error
 
-	urls, err := redis.Strings(c.Do("LRANGE", "items:myurls", "0", "-1"))
+	ids, err := redis.Ints(c.Do("LRANGE", "items:ids", "0", "-1"))
 	if err != nil {
 		return items, err
 	}
 
 	c.Send("MULTI")
 
-	for _, url := range urls {
-		c.Send("HGETALL", "items:"+url)
+	for _, id := range ids {
+		c.Send("HGETALL", "items:"+string(id))
 	}
 
 	values, err := redis.Values(c.Do("EXEC"))
@@ -120,8 +138,8 @@ func CreateItem(url string) (Item, error) {
 	if err != nil {
 		return item, err
 	}
-	defer res.Body.Close()
 
+	defer res.Body.Close()
 	contents, err := ioutil.ReadAll(res.Body)
 	if err != nil {
 		return item, err
@@ -131,12 +149,19 @@ func CreateItem(url string) (Item, error) {
 	if err != nil {
 		return item, err
 	}
-	item.ItemURL = url
+
+	id, err := redis.Int(c.Do("INCR", "items:uid"))
+	if err != nil {
+		return item, err
+	}
+
+	item.ID = id
 
 	c.Send("MULTI")
-	c.Send("HMSET", redis.Args{}.Add("items:"+url).AddFlat(item)...)
+	c.Send("HMSET", redis.Args{}.Add("items:"+string(id)).AddFlat(item)...)
 	c.Send("SADD", "items:urls", url)
-	c.Send("LPUSH", "items:myurls", url)
+	c.Send("LPUSH", "items:ids", id)
+	c.Send("SET", "items:id:"+url, id)
 	_, err = c.Do("EXEC")
 
 	return item, err

@@ -6,6 +6,7 @@ import (
 	"net/http"
 	"os"
 	"path"
+	"strconv"
 
 	"github.com/delba/goembed/model"
 )
@@ -28,9 +29,10 @@ func Index(w http.ResponseWriter, r *http.Request) {
 }
 
 func Show(w http.ResponseWriter, r *http.Request) {
-	url := r.URL.Query()["url"][0]
+	id, err := strconv.Atoi(r.URL.Query()["id"][0])
+	handle(err)
 
-	item, err := model.FindByURL(url)
+	item, err := model.FindItem(id)
 	handle(err)
 
 	data, err := json.Marshal(item)

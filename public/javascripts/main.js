@@ -14,7 +14,7 @@ $(document).on('click', '#videos a', function(e) {
 
   var $link = $(this);
 
-  $.getJSON('/items/', { url: $link.data('url') }, function(json) {
+  $.getJSON('/items/', { id: $link.data('id') }, function(json) {
     console.log(json);
     // Replace the item's thumbnail with its iframe (json.html)
   })
