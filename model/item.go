@@ -63,7 +63,7 @@ func FindItem(id int) (Item, error) {
 	return item, err
 }
 
-func FindByURL(url string) (Item, error) {
+func FindItemByURL(url string) (Item, error) {
 	var item Item
 	var err error
 
@@ -126,7 +126,7 @@ func CreateItem(url string) (Item, error) {
 	}
 
 	if isMember {
-		item, err = FindByURL(url)
+		item, err = FindItemByURL(url)
 		return item, err
 	}
 
