@@ -54,7 +54,7 @@ func FindByURL(url string) (Item, error) {
 	var item Item
 	var err error
 
-	values, err := redis.Values(c.Do("HGETALL", url))
+	values, err := redis.Values(c.Do("HGETALL", "items:"+url))
 	if err != nil {
 		return item, err
 	}
@@ -67,7 +67,7 @@ func AllItems() ([]Item, error) {
 	var items []Item
 	var err error
 
-	urls, err := redis.Strings(c.Do("LRANGE", "myurls", "0", "-1"))
+	urls, err := redis.Strings(c.Do("LRANGE", "items:myurls", "0", "-1"))
 	if err != nil {
 		return items, err
 	}
@@ -75,7 +75,7 @@ func AllItems() ([]Item, error) {
 	c.Send("MULTI")
 
 	for _, url := range urls {
-		c.Send("HGETALL", url)
+		c.Send("HGETALL", "items:"+url)
 	}
 
 	values, err := redis.Values(c.Do("EXEC"))
@@ -106,7 +106,7 @@ func CreateItem(url string) (Item, error) {
 	var item Item
 	var err error
 
-	isMember, err := redis.Bool(c.Do("SISMEMBER", "urls", url))
+	isMember, err := redis.Bool(c.Do("SISMEMBER", "items:urls", url))
 	if err != nil {
 		return item, err
 	}
@@ -134,9 +134,9 @@ func CreateItem(url string) (Item, error) {
 	item.ItemURL = url
 
 	c.Send("MULTI")
-	c.Send("HMSET", redis.Args{}.Add(url).AddFlat(item)...)
-	c.Send("SADD", "urls", url)
-	c.Send("LPUSH", "myurls", url)
+	c.Send("HMSET", redis.Args{}.Add("items:"+url).AddFlat(item)...)
+	c.Send("SADD", "items:urls", url)
+	c.Send("LPUSH", "items:myurls", url)
 	_, err = c.Do("EXEC")
 
 	return item, err
