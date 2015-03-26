@@ -50,26 +50,20 @@ func (i *Item) RawHTML() template.HTML {
 	return template.HTML(i.HTML)
 }
 
-func FindItem(id int) (Item, error) {
-	var item Item
-	var err error
-
+func FindItem(id int) (item Item, err error) {
 	values, err := redis.Values(c.Do("HGETALL", "items:"+string(id)))
 	if err != nil {
-		return item, err
+		return
 	}
 
 	err = redis.ScanStruct(values, &item)
 	return item, err
 }
 
-func FindItemByURL(url string) (Item, error) {
-	var item Item
-	var err error
-
+func FindItemByURL(url string) (item Item, err error) {
 	id, err := redis.Int(c.Do("GET", "items:id:"+url))
 	if err != nil {
-		return item, err
+		return
 	}
 
 	item, err = FindItem(id)
@@ -77,13 +71,10 @@ func FindItemByURL(url string) (Item, error) {
 	return item, err
 }
 
-func AllItems() ([]Item, error) {
-	var items []Item
-	var err error
-
+func AllItems() (items []Item, err error) {
 	ids, err := redis.Ints(c.Do("LRANGE", "items:ids", "0", "-1"))
 	if err != nil {
-		return items, err
+		return
 	}
 
 	c.Send("MULTI")
@@ -94,7 +85,7 @@ func AllItems() ([]Item, error) {
 
 	values, err := redis.Values(c.Do("EXEC"))
 	if err != nil {
-		return items, err
+		return
 	}
 
 	var item Item
@@ -102,12 +93,12 @@ func AllItems() ([]Item, error) {
 	for _, v := range values {
 		values, err = redis.Values(v, nil)
 		if err != nil {
-			return items, err
+			return
 		}
 
 		err = redis.ScanStruct(values, &item)
 		if err != nil {
-			return items, err
+			return
 		}
 
 		items = append(items, item)
@@ -116,13 +107,10 @@ func AllItems() ([]Item, error) {
 	return items, err
 }
 
-func CreateItem(url string) (Item, error) {
-	var item Item
-	var err error
-
+func CreateItem(url string) (item Item, err error) {
 	isMember, err := redis.Bool(c.Do("SISMEMBER", "items:urls", url))
 	if err != nil {
-		return item, err
+		return
 	}
 
 	if isMember {
@@ -132,12 +120,12 @@ func CreateItem(url string) (Item, error) {
 
 	item, err = OEmbed(url)
 	if err != nil {
-		return item, err
+		return
 	}
 
 	id, err := redis.Int(c.Do("INCR", "items:uid"))
 	if err != nil {
-		return item, err
+		return
 	}
 
 	item.ID = id
@@ -152,19 +140,16 @@ func CreateItem(url string) (Item, error) {
 	return item, err
 }
 
-func OEmbed(url string) (Item, error) {
-	var item Item
-	var err error
-
+func OEmbed(url string) (item Item, err error) {
 	res, err := http.Get("https://vimeo.com/api/oembed.json?url=" + url)
 	if err != nil {
-		return item, err
+		return
 	}
 
 	defer res.Body.Close()
 	contents, err := ioutil.ReadAll(res.Body)
 	if err != nil {
-		return item, err
+		return
 	}
 
 	err = json.Unmarshal(contents, &item)
