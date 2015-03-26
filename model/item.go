@@ -9,19 +9,15 @@ import (
 	"github.com/garyburd/redigo/redis"
 )
 
-func handle(err error) {
-	if err != nil {
-		panic(err)
-	}
-}
-
 var c redis.Conn
 
 func init() {
 	var err error
 
 	c, err = redis.Dial("tcp", "127.0.0.1:6379")
-	handle(err)
+	if err != nil {
+		panic(err)
+	}
 }
 
 type Item struct {
