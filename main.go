@@ -13,17 +13,26 @@ func main() {
 		port = "8080"
 	}
 
-	var videos controller.Videos
-	http.HandleFunc("/", videos.Index)
-	http.HandleFunc("/items/", videos.Show)
-	http.HandleFunc("/embed", videos.Create)
+	var (
+		videos   controller.Videos
+		users    controller.Users
+		sessions controller.Sessions
+	)
 
-	var users controller.Users
-	http.HandleFunc("/register", users.Register)
+	type handler func(http.ResponseWriter, *http.Request)
 
-	var sessions controller.Sessions
-	http.HandleFunc("/login", sessions.Login)
-	http.HandleFunc("/logout", sessions.Logout)
+	var routes = map[string]handler{
+		"/":         videos.Index,
+		"/items/":   videos.Show,
+		"/embed":    videos.Create,
+		"/register": users.Register,
+		"/login":    sessions.Login,
+		"/logout":   sessions.Logout,
+	}
+
+	for path, handler := range routes {
+		http.HandleFunc(path, handler)
+	}
 
 	fs := http.FileServer(http.Dir("public"))
 	http.Handle("/public/", http.StripPrefix("/public/", fs))
