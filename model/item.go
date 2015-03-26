@@ -130,18 +130,7 @@ func CreateItem(url string) (Item, error) {
 		return item, err
 	}
 
-	res, err := http.Get("https://vimeo.com/api/oembed.json?url=" + url)
-	if err != nil {
-		return item, err
-	}
-
-	defer res.Body.Close()
-	contents, err := ioutil.ReadAll(res.Body)
-	if err != nil {
-		return item, err
-	}
-
-	err = json.Unmarshal(contents, &item)
+	item, err = OEmbed(url)
 	if err != nil {
 		return item, err
 	}
@@ -160,5 +149,24 @@ func CreateItem(url string) (Item, error) {
 	c.Send("SET", "items:id:"+url, id)
 	_, err = c.Do("EXEC")
 
+	return item, err
+}
+
+func OEmbed(url string) (Item, error) {
+	var item Item
+	var err error
+
+	res, err := http.Get("https://vimeo.com/api/oembed.json?url=" + url)
+	if err != nil {
+		return item, err
+	}
+
+	defer res.Body.Close()
+	contents, err := ioutil.ReadAll(res.Body)
+	if err != nil {
+		return item, err
+	}
+
+	err = json.Unmarshal(contents, &item)
 	return item, err
 }
