@@ -70,6 +70,7 @@ func main() {
 
 	fs := http.FileServer(http.Dir("public"))
 	http.Handle("/public/", http.StripPrefix("/public/", fs))
+	http.Handle("/favicon.ico", fs)
 
 	http.ListenAndServe(":"+port, nil)
 }
