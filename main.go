@@ -7,21 +7,23 @@ import (
 	"github.com/delba/goembed/controller"
 )
 
-func handle(err error) {
-	if err != nil {
-		panic(err)
-	}
-}
-
 func main() {
 	port := os.Getenv("PORT")
 	if port == "" {
 		port = "8080"
 	}
 
-	http.HandleFunc("/", controller.Index)
-	http.HandleFunc("/items/", controller.Show)
-	http.HandleFunc("/embed", controller.Create)
+	var videos controller.Videos
+	http.HandleFunc("/", videos.Index)
+	http.HandleFunc("/items/", videos.Show)
+	http.HandleFunc("/embed", videos.Create)
+
+	var users controller.Users
+	http.HandleFunc("/register", users.Register)
+
+	var sessions controller.Sessions
+	http.HandleFunc("/login", sessions.Login)
+	http.HandleFunc("/logout", sessions.Logout)
 
 	fs := http.FileServer(http.Dir("public"))
 	http.Handle("/public/", http.StripPrefix("/public/", fs))

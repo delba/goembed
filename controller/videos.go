@@ -16,7 +16,9 @@ func handle(err error) {
 	}
 }
 
-func Index(w http.ResponseWriter, r *http.Request) {
+type Videos struct{}
+
+func (v *Videos) Index(w http.ResponseWriter, r *http.Request) {
 	t, err := template.ParseFiles(path.Join("views", "index.html"))
 	handle(err)
 
@@ -27,7 +29,7 @@ func Index(w http.ResponseWriter, r *http.Request) {
 	handle(err)
 }
 
-func Show(w http.ResponseWriter, r *http.Request) {
+func (v *Videos) Show(w http.ResponseWriter, r *http.Request) {
 	id, err := strconv.Atoi(r.URL.Query()["id"][0])
 	handle(err)
 
@@ -40,7 +42,7 @@ func Show(w http.ResponseWriter, r *http.Request) {
 	w.Write(data)
 }
 
-func Create(w http.ResponseWriter, r *http.Request) {
+func (v *Videos) Create(w http.ResponseWriter, r *http.Request) {
 	url := r.FormValue("url")
 	if url == "" {
 		w.WriteHeader(http.StatusNotAcceptable)
