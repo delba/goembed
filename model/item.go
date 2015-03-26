@@ -53,6 +53,7 @@ func FindItem(id int) (item Item, err error) {
 	}
 
 	err = redis.ScanStruct(values, &item)
+
 	return item, err
 }
 
@@ -149,5 +150,6 @@ func OEmbed(url string) (item Item, err error) {
 	}
 
 	err = json.Unmarshal(contents, &item)
+
 	return item, err
 }
