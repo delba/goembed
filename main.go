@@ -14,15 +14,15 @@ func main() {
 	}
 
 	var (
-		videos   controller.Videos
+		items    controller.Items
 		users    controller.Users
 		sessions controller.Sessions
 	)
 
 	var routes = map[string]http.HandlerFunc{
-		"/":         videos.Index,
-		"/items/":   videos.Show,
-		"/embed":    videos.Create,
+		"/":         items.Index,
+		"/items/":   items.Show,
+		"/embed":    items.Create,
 		"/register": users.Register,
 		"/login":    sessions.Login,
 		"/logout":   sessions.Logout,

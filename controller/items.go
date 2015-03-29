@@ -16,10 +16,10 @@ func handle(err error) {
 	}
 }
 
-type Videos struct{}
+type Items struct{}
 
-func (v *Videos) Index(w http.ResponseWriter, r *http.Request) {
-	t, err := template.ParseFiles(path.Join("views", "videos", "index.html"))
+func (i *Items) Index(w http.ResponseWriter, r *http.Request) {
+	t, err := template.ParseFiles(path.Join("views", "items", "index.html"))
 	handle(err)
 
 	items, err := model.AllItems()
@@ -29,7 +29,7 @@ func (v *Videos) Index(w http.ResponseWriter, r *http.Request) {
 	handle(err)
 }
 
-func (v *Videos) Show(w http.ResponseWriter, r *http.Request) {
+func (i *Items) Show(w http.ResponseWriter, r *http.Request) {
 	id, err := strconv.Atoi(r.URL.Query()["id"][0])
 	handle(err)
 
@@ -42,7 +42,7 @@ func (v *Videos) Show(w http.ResponseWriter, r *http.Request) {
 	w.Write(data)
 }
 
-func (v *Videos) Create(w http.ResponseWriter, r *http.Request) {
+func (i *Items) Create(w http.ResponseWriter, r *http.Request) {
 	url := r.FormValue("url")
 	if url == "" {
 		w.WriteHeader(http.StatusNotAcceptable)

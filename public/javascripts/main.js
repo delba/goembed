@@ -1,15 +1,15 @@
-$(document).on('submit', '#new_video', function(e) {
+$(document).on('submit', '#new_item', function(e) {
   e.preventDefault();
 
   var $form = $(this);
 
   $.post($form.attr('action'), $form.serialize(), function(json) {
     console.log(json);
-    // Populate a video template and prepend it in the #videos section
+    // Populate an item template and prepend it in the #items section
   }, 'json')
 })
 
-$(document).on('click', '#videos a', function(e) {
+$(document).on('click', '#items a', function(e) {
   e.preventDefault();
 
   var $link = $(this);

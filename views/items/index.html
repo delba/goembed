@@ -7,15 +7,15 @@
 <body>
   <header>
     <h1><a href="/">Home</a></h1>
-    <form action="/embed" method="POST" id="new_video">
+    <form action="/embed" method="POST" id="new_item">
       <input type="text" name="url" placeholder="Enter an url&hellip;" autofocus />
       <input type="submit" value="Submit">
     </form>
   </header>
 
-  <section id="videos">
+  <section id="items">
     {{range .}}
-      <article class="video">
+      <article class="item">
         <a data-id="{{.ID}}">
           <img src="{{.ThumbnailURL}}" alt="{{.Title}}">
           <h2><span>{{.Title}}</span></h2>
@@ -28,7 +28,7 @@
   <script src="http://rawgit.com/davatron5000/FitVids.js/master/jquery.fitvids.js"></script>
   <script src="/public/javascripts/main.js"></script>
   <script type="text/javascript">
-    $('#videos a').hover(function() {
+    $('#items a').hover(function() {
       $(this).toggleClass('overlay');
     });
   </script>

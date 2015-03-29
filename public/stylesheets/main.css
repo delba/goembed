@@ -53,12 +53,12 @@ header form {
   display: inline;
 }
 
-#videos a {
+#items a {
   display: block;
   position: relative;
 }
 
-#videos h2 {
+#items h2 {
   opacity: 0;
   background: rgba(0, 0, 0, 0.5);
   color: #fff;
@@ -72,11 +72,11 @@ header form {
   transition: opacity 200ms;
 }
 
-#videos .overlay h2 {
+#items .overlay h2 {
   opacity: 1;
 }
 
-#videos h2 span {
+#items h2 span {
   display: block;
   width: 100%;
   text-align: center;
@@ -86,11 +86,11 @@ header form {
   margin-top: -0.75em;
 }
 
-#videos article {
+#items article {
   margin-bottom: 1.5em;
 }
 
-#videos img {
+#items img {
   width: 100%;
   max-width: 100%;
 }
