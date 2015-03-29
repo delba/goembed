@@ -19,9 +19,7 @@ func main() {
 		sessions controller.Sessions
 	)
 
-	type handler func(http.ResponseWriter, *http.Request)
-
-	var routes = map[string]handler{
+	var routes = map[string]http.HandlerFunc{
 		"/":         videos.Index,
 		"/items/":   videos.Show,
 		"/embed":    videos.Create,
@@ -30,8 +28,8 @@ func main() {
 		"/logout":   sessions.Logout,
 	}
 
-	for path, handler := range routes {
-		http.HandleFunc(path, handler)
+	for path, handlerFunc := range routes {
+		http.HandleFunc(path, handlerFunc)
 	}
 
 	fs := http.FileServer(http.Dir("public"))
