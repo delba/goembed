@@ -19,7 +19,7 @@ func handle(err error) {
 type Videos struct{}
 
 func (v *Videos) Index(w http.ResponseWriter, r *http.Request) {
-	t, err := template.ParseFiles(path.Join("views", "index.html"))
+	t, err := template.ParseFiles(path.Join("views", "videos", "index.html"))
 	handle(err)
 
 	items, err := model.AllItems()
