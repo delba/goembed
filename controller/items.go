@@ -8,6 +8,7 @@ import (
 	"strconv"
 
 	"github.com/delba/goembed/model"
+	"github.com/julienschmidt/httprouter"
 )
 
 func handle(err error) {
@@ -18,7 +19,7 @@ func handle(err error) {
 
 type Items struct{}
 
-func (i *Items) Index(w http.ResponseWriter, r *http.Request) {
+func (i *Items) Index(w http.ResponseWriter, r *http.Request, _ httprouter.Params) {
 	t, err := template.ParseFiles(path.Join("views", "items", "index.html"))
 	handle(err)
 
@@ -29,8 +30,8 @@ func (i *Items) Index(w http.ResponseWriter, r *http.Request) {
 	handle(err)
 }
 
-func (i *Items) Show(w http.ResponseWriter, r *http.Request) {
-	id, err := strconv.Atoi(r.URL.Query()["id"][0])
+func (i *Items) Show(w http.ResponseWriter, r *http.Request, ps httprouter.Params) {
+	id, err := strconv.Atoi(ps.ByName("id"))
 	handle(err)
 
 	item, err := model.FindItem(id)
@@ -42,7 +43,7 @@ func (i *Items) Show(w http.ResponseWriter, r *http.Request) {
 	w.Write(data)
 }
 
-func (i *Items) Create(w http.ResponseWriter, r *http.Request) {
+func (i *Items) Create(w http.ResponseWriter, r *http.Request, _ httprouter.Params) {
 	url := r.FormValue("url")
 	if url == "" {
 		w.WriteHeader(http.StatusNotAcceptable)

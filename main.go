@@ -5,6 +5,13 @@ import (
 	"os"
 
 	"github.com/delba/goembed/controller"
+	"github.com/julienschmidt/httprouter"
+)
+
+var (
+	items    controller.Items
+	users    controller.Users
+	sessions controller.Sessions
 )
 
 func main() {
@@ -13,28 +20,19 @@ func main() {
 		port = "8080"
 	}
 
-	var (
-		items    controller.Items
-		users    controller.Users
-		sessions controller.Sessions
-	)
-
-	var routes = map[string]http.HandlerFunc{
-		"/":         items.Index,
-		"/items/":   items.Show,
-		"/embed":    items.Create,
-		"/register": users.Register,
-		"/login":    sessions.Login,
-		"/logout":   sessions.Logout,
-	}
-
-	for path, handlerFunc := range routes {
-		http.HandleFunc(path, handlerFunc)
-	}
+	router := httprouter.New()
+	router.GET("/", items.Index)
+	router.GET("/items/:id", items.Show)
+	router.POST("/embed", items.Create)
+	router.GET("/register", users.New)
+	router.POST("/register", users.Create)
+	router.GET("/login", sessions.New)
+	router.POST("/login", sessions.Create)
+	router.DELETE("/logout", sessions.Destroy)
 
 	fs := http.FileServer(http.Dir("public"))
-	http.Handle("/public/", http.StripPrefix("/public/", fs))
-	http.Handle("/favicon.ico", fs)
+	router.Handler("GET", "/public/*filepath", http.StripPrefix("/public/", fs))
+	router.Handler("GET", "/favicon.ico", fs)
 
-	http.ListenAndServe(":"+port, nil)
+	http.ListenAndServe(":"+port, router)
 }

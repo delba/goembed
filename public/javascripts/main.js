@@ -12,9 +12,9 @@ $(document).on('submit', '#new_item', function(e) {
 $(document).on('click', '#items a', function(e) {
   e.preventDefault();
 
-  var $link = $(this);
+  var $link = $(this), id = $link.data('id');
 
-  $.getJSON('/items/', { id: $link.data('id') }, function(json) {
+  $.getJSON('/items/' + id, function(json) {
     console.log(json);
     // Replace the item's thumbnail with its iframe (json.html)
   })
