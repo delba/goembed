@@ -7,7 +7,7 @@ import (
 	"path"
 	"strconv"
 
-	"github.com/delba/goembed/model"
+	"github.com/delba/goembed/models"
 	"github.com/julienschmidt/httprouter"
 )
 
@@ -23,7 +23,7 @@ func (i *Items) Index(w http.ResponseWriter, r *http.Request, _ httprouter.Param
 	t, err := template.ParseFiles(path.Join("views", "items", "index.html"))
 	handle(err)
 
-	items, err := model.AllItems()
+	items, err := models.AllItems()
 	handle(err)
 
 	err = t.Execute(w, items)
@@ -34,7 +34,7 @@ func (i *Items) Show(w http.ResponseWriter, r *http.Request, ps httprouter.Param
 	id, err := strconv.Atoi(ps.ByName("id"))
 	handle(err)
 
-	item, err := model.FindItem(id)
+	item, err := models.FindItem(id)
 	handle(err)
 
 	data, err := json.Marshal(item)
@@ -51,7 +51,7 @@ func (i *Items) Create(w http.ResponseWriter, r *http.Request, _ httprouter.Para
 		return
 	}
 
-	item, err := model.CreateItem(url)
+	item, err := models.CreateItem(url)
 	handle(err)
 
 	data, err := json.Marshal(item)
