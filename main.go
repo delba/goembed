@@ -4,14 +4,14 @@ import (
 	"net/http"
 	"os"
 
-	"github.com/delba/goembed/controller"
+	"github.com/delba/goembed/controllers"
 	"github.com/julienschmidt/httprouter"
 )
 
 var (
-	items    controller.Items
-	users    controller.Users
-	sessions controller.Sessions
+	items    controllers.Items
+	users    controllers.Users
+	sessions controllers.Sessions
 )
 
 func main() {
