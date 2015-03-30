@@ -20,7 +20,9 @@ func handle(err error) {
 type Items struct{}
 
 func (i *Items) Index(w http.ResponseWriter, r *http.Request, _ httprouter.Params) {
-	t, err := template.ParseFiles(path.Join("views", "items", "index.html"))
+	layoutFile := path.Join("views", "layouts", "application.html")
+	viewFile := path.Join("views", "items", "index.html")
+	t, err := template.ParseFiles(layoutFile, viewFile)
 	handle(err)
 
 	items, err := models.AllItems()

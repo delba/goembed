@@ -1,18 +1,4 @@
-<!DOCTYPE html>
-<html>
-<head>
-    <title>Goembed</title>
-    <link rel="stylesheet" href="/public/stylesheets/main.css">
-</head>
-<body>
-  <header>
-    <h1><a href="/">Home</a></h1>
-    <form action="/embed" method="POST" id="new_item">
-      <input type="text" name="url" placeholder="Enter an url&hellip;" autofocus />
-      <input type="submit" value="Submit">
-    </form>
-  </header>
-
+{{define "main"}}
   <section id="items">
     {{range .}}
       <article class="item">
@@ -23,25 +9,4 @@
       </article>
     {{end}}
   </section>
-
-  <script type="text/template" id="item-template">
-      <article class="item">
-        <a data-id="<%= item.id %>">
-          <img src="<%= item.thumbnail_url %>" alt="<%= item.title %>">
-          <h2><span><%= item.title %></span></h2>
-        </a>
-      </article>
-  </script>
-
-  <script src="//code.jquery.com/jquery-2.0.3.js"></script>
-  <script src="https://cdnjs.cloudflare.com/ajax/libs/underscore.js/1.8.2/underscore-min.js"></script>
-  <script src="http://rawgit.com/davatron5000/FitVids.js/master/jquery.fitvids.js"></script>
-  <script src="/public/javascripts/main.js"></script>
-  <script type="text/javascript">
-    $('#items a').hover(function() {
-      $(this).toggleClass('overlay');
-    });
-  </script>
-</body>
-</html>
-
+{{end}}
