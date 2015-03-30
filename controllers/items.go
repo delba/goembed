@@ -4,24 +4,17 @@ import (
 	"encoding/json"
 	"html/template"
 	"net/http"
-	"path"
 	"strconv"
 
 	"github.com/delba/goembed/models"
 	"github.com/julienschmidt/httprouter"
 )
 
-func handle(err error) {
-	if err != nil {
-		panic(err)
-	}
-}
-
 type Items struct{}
 
 func (i *Items) Index(w http.ResponseWriter, r *http.Request, _ httprouter.Params) {
-	layoutFile := path.Join("views", "layouts", "application.html")
-	viewFile := path.Join("views", "items", "index.html")
+	layoutFile := layoutPath("application.html")
+	viewFile := viewPath("items", "index.html")
 	t, err := template.ParseFiles(layoutFile, viewFile)
 	handle(err)
 
