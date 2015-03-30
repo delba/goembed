@@ -22,3 +22,12 @@ $(document).on('click', '#items a', function(e) {
     // Replace the item's thumbnail with its iframe (json.html)
   })
 })
+
+$(document).on({
+  mouseenter: function(e) {
+    $(this).addClass('overlay');
+  },
+  mouseleave: function(e) {
+    $(this).removeClass('overlay');
+  }
+}, '#items a')
