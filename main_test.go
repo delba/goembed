@@ -9,7 +9,8 @@ import (
 	"net/url"
 	"testing"
 
-	"github.com/delba/goembed/model"
+	"github.com/delba/goembed/models"
+	"github.com/julienschmidt/httprouter"
 )
 
 func init() {
@@ -30,9 +31,10 @@ func TestCreate(t *testing.T) {
 		log.Fatal(err)
 	}
 	w := httptest.NewRecorder()
-	Create(w, req)
+	ps := httprouter.Params{}
+	items.Create(w, req, ps)
 
-	var item model.Item
+	var item models.Item
 	json.Unmarshal(w.Body.Bytes(), &item)
 	if item.AuthorURL != "https://vimeo.com/phoenixfly" {
 		t.Errorf("Incorrect author url")
@@ -53,7 +55,8 @@ func TestEmptyCreate(t *testing.T) {
 		log.Fatal(err)
 	}
 	w := httptest.NewRecorder()
-	Create(w, req)
+	ps := httprouter.Params{}
+	items.Create(w, req, ps)
 	if w.Code != 406 {
 		t.Errorf("Wrong response code for invalid request")
 	}
@@ -69,7 +72,8 @@ func TestIndex(t *testing.T) {
 		log.Fatal(err)
 	}
 	w := httptest.NewRecorder()
-	Index(w, req)
+	ps := httprouter.Params{}
+	items.Index(w, req, ps)
 	if w.Code != 200 {
 		t.Errorf("Wrong response code for index request")
 	}
