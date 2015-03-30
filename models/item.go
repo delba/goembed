@@ -5,6 +5,7 @@ import (
 	"html/template"
 	"io/ioutil"
 	"net/http"
+	"os"
 
 	"github.com/garyburd/redigo/redis"
 )
@@ -14,7 +15,12 @@ var c redis.Conn
 func init() {
 	var err error
 
-	c, err = redis.Dial("tcp", "127.0.0.1:6379")
+	address := os.Getenv("REDISTOGO_URL")
+	if address == "" {
+		address = "127.0.0.1:6379"
+	}
+
+	c, err = redis.Dial("tcp", address)
 	if err != nil {
 		panic(err)
 	}
