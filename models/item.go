@@ -8,6 +8,7 @@ import (
 	"net/http"
 	"net/url"
 	"os"
+	"strings"
 
 	"github.com/garyburd/redigo/redis"
 )
@@ -130,6 +131,8 @@ func AllItems() (items []Item, err error) {
 }
 
 func CreateItem(url string) (item Item, err error) {
+	url = strings.TrimSpace(url)
+
 	isMember, err := redis.Bool(c.Do("SISMEMBER", "items:urls", url))
 	if err != nil {
 		return
