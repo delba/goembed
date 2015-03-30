@@ -1,9 +1,6 @@
 package controllers
 
-import (
-	"path"
-	"runtime"
-)
+import "path"
 
 func handle(err error) {
 	if err != nil {
@@ -12,13 +9,11 @@ func handle(err error) {
 }
 
 func viewPath(elem ...string) string {
-	_, __FILE__, _, _ := runtime.Caller(1)
-	components := append([]string{path.Dir(__FILE__), "..", "views"}, elem...)
+	components := append([]string{"views"}, elem...)
 	return path.Join(components...)
 }
 
 func layoutPath(elem ...string) string {
-	_, __FILE__, _, _ := runtime.Caller(1)
-	components := append([]string{path.Dir(__FILE__), "..", "views", "layouts"}, elem...)
+	components := append([]string{"views", "layouts"}, elem...)
 	return path.Join(components...)
 }
