@@ -2,49 +2,13 @@ package models
 
 import (
 	"encoding/json"
-	"fmt"
 	"html/template"
 	"io/ioutil"
 	"net/http"
-	"net/url"
-	"os"
 	"strings"
 
 	"github.com/garyburd/redigo/redis"
 )
-
-func handle(err error) {
-	if err != nil {
-		panic(err)
-	}
-}
-
-var c redis.Conn
-
-func init() {
-	var err error
-
-	var u *url.URL
-
-	if redisURL := os.Getenv("REDISTOGO_URL"); redisURL != "" {
-		u, err = url.Parse(redisURL)
-		handle(err)
-	} else {
-		u = &url.URL{Host: "127.0.0.1:6379"}
-	}
-
-	c, err = redis.Dial("tcp", u.Host)
-	handle(err)
-
-	fmt.Println(u.User)
-
-	if u.User != nil {
-		if pw, ok := u.User.Password(); ok {
-			_, err = c.Do("AUTH", pw)
-			handle(err)
-		}
-	}
-}
 
 type Item struct {
 	AuthorName      string `json:"author_name"`
