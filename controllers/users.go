@@ -28,7 +28,7 @@ func (u *Users) Create(w http.ResponseWriter, r *http.Request, _ httprouter.Para
 	user, err := models.CreateUser(username, password)
 	handle(err)
 
-	fmt.Println(user.ID, user.Username, user.Password)
+	fmt.Println(user.ID, user.Username, string(user.Password))
 
 	http.Redirect(w, r, "/", 302)
 }

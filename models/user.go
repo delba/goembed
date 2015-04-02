@@ -5,12 +5,13 @@ import (
 	"strings"
 
 	"github.com/garyburd/redigo/redis"
+	"golang.org/x/crypto/bcrypt"
 )
 
 type User struct {
 	ID       int
 	Username string
-	Password string
+	Password []byte
 }
 
 func CreateUser(username string, password string) (user User, err error) {
@@ -27,12 +28,19 @@ func CreateUser(username string, password string) (user User, err error) {
 		return
 	}
 
+	hashedPassword, err := bcrypt.GenerateFromPassword([]byte(password), 10)
+	if err != nil {
+		return
+	}
+
+	user = User{Username: username, Password: hashedPassword}
+
 	id, err := redis.Int(c.Do("INCR", "users:uid"))
 	if err != nil {
 		return
 	}
 
-	user = User{ID: id, Username: username, Password: password}
+	user.ID = id
 
 	c.Send("MULTI")
 	c.Send("HMSET", redis.Args{}.Add("users:"+string(id)).AddFlat(user)...)
