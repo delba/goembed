@@ -13,6 +13,14 @@
 		{
 			"ImportPath": "github.com/julienschmidt/httprouter",
 			"Rev": "999ba04938b528fb4fb859231ee929958b8db4a6"
+		},
+		{
+			"ImportPath": "golang.org/x/crypto/bcrypt",
+			"Rev": "c57d4a71915a248dbad846d60825145062b4c18e"
+		},
+		{
+			"ImportPath": "golang.org/x/crypto/blowfish",
+			"Rev": "c57d4a71915a248dbad846d60825145062b4c18e"
 		}
 	]
 }
