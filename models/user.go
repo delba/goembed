@@ -51,3 +51,39 @@ func CreateUser(username string, password string) (user User, err error) {
 
 	return user, err
 }
+
+func FindUser(id int) (user User, err error) {
+	values, err := redis.Values(c.Do("HGETALL", "users:"+string(id)))
+	if err != nil {
+		return
+	}
+
+	err = redis.ScanStruct(values, &user)
+
+	return user, err
+}
+
+func FindUserByUsername(username string) (user User, err error) {
+	id, err := redis.Int(c.Do("GET", "users:id:"+username))
+	if err != nil {
+		return
+	}
+
+	user, err = FindUser(id)
+
+	return user, err
+}
+
+func AuthenticateUser(username string, password string) (user User, err error) {
+	user, err = FindUserByUsername(username)
+	if err != nil {
+		return
+	}
+
+	err = bcrypt.CompareHashAndPassword(user.Password, []byte(password))
+	if err != nil {
+		return
+	}
+
+	return user, err
+}
